@@ -1,55 +1,70 @@
 import LED.dzn;
 import Timer.dzn;
 import Siren.dzn;
+import PWManager.dzn;
+import Sensor.dzn;
 
 interface IController {
-  in void validPincode();
-  in void sensorTriggered();
+  in void passwordEntered(String pw);
 
   behaviour {
-    on validPincode: {}
-    on sensorTriggered: {}
+    on passwordEntered: {}
   }
 }
 
 component Controller {
   provides IController iController;
-  requires ITimer iTimer;
   requires ISiren iSiren;
   requires ILED iLed;
+  requires ITimer iTimer;
+  requires IPWManager iPWManager;
+  requires ISensor iSensor;
 
   behaviour {
     enum State { Unarmed, Armed, Alarming };
     State state = State.Unarmed;
 
     [state.Unarmed] {
-      on iController.validPincode(): {
-        state = State.Armed;
-        iLed.setYellow();
+      on iController.passwordEntered(pw): {
+      	bool valid = iPWManager.verifyPassword(pw);
+      	if(valid) {
+	        state = State.Armed;
+	        iLed.setYellow();
+	        iSensor.turnOn();
+        }
       }
-      on iController.sensorTriggered(): {}
+      on iSensor.triggered(): {}
       on iTimer.timeout(): illegal;
     }
     [state.Armed] {
-      on iController.validPincode(): {
-        state = State.Unarmed;
-        iLed.setGreen();
+      on iController.passwordEntered(pw): {
+      	bool valid = iPWManager.verifyPassword(pw);
+      	if(valid) {
+	        state = State.Unarmed;
+	        iLed.setGreen();
+	        iSensor.turnOff();
+      	}
       }
-      on iController.sensorTriggered(): {
+      on iSensor.triggered(): {
       	state = State.Alarming;
       	iTimer.start($30000$);
       	iLed.setRed();
+      	iSensor.turnOff();
       }
       on iTimer.timeout(): illegal;
     }
     [state.Alarming] {
-      on iController.validPincode(): {
-        state = State.Armed;
-        iLed.setYellow();
-        iSiren.turnOff();
-        iTimer.cancel();
+      on iController.passwordEntered(pw): {
+      	bool valid = iPWManager.verifyPassword(pw);
+      	if(valid) {
+	        state = State.Armed;
+	        iLed.setYellow();
+	        iSiren.turnOff();
+	        iTimer.cancel();
+	        iSensor.turnOn();
+        }
       }
-      on iController.sensorTriggered(): {}
+      on iSensor.triggered(): {}
       on iTimer.timeout(): {
       	iSiren.turnOn();
       }
