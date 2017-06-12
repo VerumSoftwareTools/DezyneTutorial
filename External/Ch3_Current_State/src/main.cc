@@ -33,11 +33,6 @@ main(int argc, char* argv[])
 
   std::string input;
   while(std::cin >> input) {
-    if(input.compare("s") == 0) {
-      as.iController.in.sensorTriggered();
-    }
-    else /*user input counts as password*/ {
-      as.iController.in.passwordEntered(input);
-    }
+    as.iController.in.passwordEntered(input);
   }
 }
