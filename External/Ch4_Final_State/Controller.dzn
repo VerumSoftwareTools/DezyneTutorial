@@ -23,6 +23,7 @@ component Controller {
   behaviour {
     enum State { Unarmed, Armed, Alarming, Rearming };
     State state = State.Unarmed;
+    bool correctPasswordQueued = false;
 
     [state.Unarmed] {
       on iController.passwordEntered(pw): {
@@ -54,19 +55,27 @@ component Controller {
       on iTimer.timeout(): illegal;
     }
     [state.Rearming] {
-    	on iController.passwordEntered(pw): {}
-    	on iSensor.triggered(): {}
-    	on iTimer.cancelled(): state = State.Armed;
+      on iController.passwordEntered(pw): correctPasswordQueued = iPWManager.verifyPassword(pw);
+      on iSensor.triggered(): {}
+      on iTimer.cancelled(): {
+    	  if(correctPasswordQueued) {
+    	    state = State.Unarmed;
+    	    iLed.setGreen();
+    	  }
+    	  else {
+    	    state = State.Armed;
+    	    iLed.setYellow();
+	        iSensor.turnOn();
+    	  }
+      }
     }
     [state.Alarming] {
       on iController.passwordEntered(pw): {
       	bool valid = iPWManager.verifyPassword(pw);
       	if(valid) {
 	        state = State.Rearming;
-	        iLed.setYellow();
-	        iSiren.turnOff();
 	        iTimer.cancel();
-	        iSensor.turnOn();
+    	    iSiren.turnOff();
         }
       }
       on iSensor.triggered(): {}
