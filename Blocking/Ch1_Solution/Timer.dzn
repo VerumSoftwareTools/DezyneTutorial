@@ -61,41 +61,40 @@ interface AsyncITimer {
 }
 
 component RobustTimer {
-  provides ITimer iTimer;
-  requires external AsyncITimer ext_iTimer;
+	provides ITimer iTimer;
+	requires external AsyncITimer ext_iTimer;
 
-  behaviour {
-    enum State { Idle, Running, Stopping };
-    State state = State.Idle;
+	behaviour {
+		enum State { Idle, Running, Stopping };
+		State state = State.Idle;
 
-    on iTimer.start(ms): {
-      [state.Idle] {
-        ext_iTimer.start(ms);
-        state = State.Running;
-      }
-    }
+		on iTimer.start(ms): {
+			[state.Idle] {
+				ext_iTimer.start(ms);
+				state = State.Running;
+			}
+		}
 
-    on iTimer.cancel(): {
-      [state.Running] blocking {
-        ext_iTimer.cancel();
-        state = State.Stopping;
-      }
-      [state.Idle] { }
-    }
+		on iTimer.cancel(): {
+			[state.Running] {
+				ext_iTimer.cancel();
+				state = State.Stopping;
+			}
+			[state.Idle] { }
+		}
 
-    on ext_iTimer.timeout(): {
-      [state.Running] {
-        iTimer.timeout();
-        state = State.Idle;
-      }
-      [state.Stopping] { /* discard */ }
-    }
+		on ext_iTimer.timeout(): {
+			[state.Running] {
+				iTimer.timeout();
+				state = State.Idle;
+			}
+			[state.Stopping] { /* discard */ }
+		}
 
-    on ext_iTimer.cancelled(): {
-      [state.Stopping] {
-        iTimer.reply();
-        state = State.Idle;
-      }
-    }
-  }
+		on ext_iTimer.cancelled(): {
+			[state.Stopping] {
+				state = State.Idle;
+			}
+		}
+	}
 }
