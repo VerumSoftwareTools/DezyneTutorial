@@ -4,7 +4,7 @@ CPPFLAGS = -MMD -MF $(@:%.o=%.d) -MT '$(@:%.o=%.d) $@' -I$(SRC) -I$(RUNTIME)
 LDFLAGS = -lpthread
 RM = rm -rf
 TARGET = dznpi
-VERSION = 2.3.3
+VERSION = 2.3.4
 SYSTEMNAME = AlarmSystem
 SYSTEMFILE = $(SYSTEMNAME).dzn
 CURRENT := $(shell dzn query | grep '*' | sed 's,\* ,,')
