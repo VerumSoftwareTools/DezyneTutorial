@@ -21,7 +21,7 @@ component Controller {
   requires ISensor iSensor;
 
   behaviour {
-    enum State { Unarmed, Armed, Alarming, Rearming };
+    enum State { Unarmed, Armed, Alarming };
     State state = State.Unarmed;
     bool correctPasswordQueued = false;
 
@@ -29,9 +29,9 @@ component Controller {
       on iController.passwordEntered(pw): {
       	bool valid = iPWManager.verifyPassword(pw);
       	if(valid) {
-	      state = State.Armed;
-	      iLed.setYellow();
-	      iSensor.turnOn();
+          state = State.Armed;
+          iLed.setYellow();
+          iSensor.turnOn();
         }
       }
       on iSensor.triggered(): {}
@@ -41,9 +41,9 @@ component Controller {
       on iController.passwordEntered(pw): {
       	bool valid = iPWManager.verifyPassword(pw);
       	if(valid) {
-	      state = State.Unarmed;
-	      iLed.setGreen();
-	      iSensor.turnOff();
+          state = State.Unarmed;
+          iLed.setGreen();
+          iSensor.turnOff();
       	}
       }
       on iSensor.triggered(): {
@@ -54,29 +54,15 @@ component Controller {
       }
       on iTimer.timeout(): illegal;
     }
-    [state.Rearming] {
-      on iController.passwordEntered(pw): correctPasswordQueued = iPWManager.verifyPassword(pw);
-      on iSensor.triggered(): {}
-      on iTimer.cancelled(): {
-    	if(correctPasswordQueued) {
-    	  state = State.Unarmed;
-    	  iLed.setGreen();
-    	  correctPasswordQueued = false;
-    	}
-    	else {
-    	  state = State.Armed;
-    	  iLed.setYellow();
-	      iSensor.turnOn();
-    	}
-      }
-    }
     [state.Alarming] {
       on iController.passwordEntered(pw): {
       	bool valid = iPWManager.verifyPassword(pw);
       	if(valid) {
-	      state = State.Rearming;
-	      iTimer.cancel();
-    	  iSiren.turnOff();
+          state = State.Armed;
+          iTimer.cancel();
+          iSiren.turnOff();
+          iLed.setYellow();
+	        iSensor.turnOn();
         }
       }
       on iSensor.triggered(): {}
