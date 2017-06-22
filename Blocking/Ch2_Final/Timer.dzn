@@ -76,11 +76,11 @@ component RobustTimer {
     }
 
     on iTimer.cancel(): {
-      [state.Running] {
+      blocking [state.Running] {
         ext_iTimer.cancel();
         state = State.Stopping;
       }
-      [state.Idle] { iTimer.cancelled(); }
+      [state.Idle] { }
     }
 
     on ext_iTimer.timeout(): {
@@ -93,8 +93,8 @@ component RobustTimer {
 
     on ext_iTimer.cancelled(): {
       [state.Stopping] {
-        iTimer.cancelled();
         state = State.Idle;
+        iTimer.reply();
       }
     }
   }
