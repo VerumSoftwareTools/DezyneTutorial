@@ -1,6 +1,6 @@
 import ILED.dzn;
 import Timer.dzn;
-import Siren.dzn;
+import ISiren.dzn;
 
 interface IController {
   in void validPincode();

@@ -1,9 +1,9 @@
 import Controller.dzn;
 import ILED.dzn;
 import Timer.dzn;
-import Siren.dzn;
-import PWManager.dzn;
-import Sensor.dzn;
+import ISiren.dzn;
+import IPWManager.dzn;
+import ISensor.dzn;
 
 component AlarmSystem {
 	provides IController iController;

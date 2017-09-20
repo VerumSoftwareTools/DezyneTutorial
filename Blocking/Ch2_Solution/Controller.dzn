@@ -1,8 +1,8 @@
 import ILED.dzn;
 import Timer.dzn;
-import Siren.dzn;
-import PWManager.dzn;
-import Sensor.dzn;
+import ISiren.dzn;
+import IPWManager.dzn;
+import ISensor.dzn;
 
 interface IController {
   in void passwordEntered(String pw);
