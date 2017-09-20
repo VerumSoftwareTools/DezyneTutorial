@@ -1,5 +1,5 @@
 import Controller.dzn;
-import LED.dzn;
+import ILED.dzn;
 
 component AlarmSystem {
 	provides IController iController;
