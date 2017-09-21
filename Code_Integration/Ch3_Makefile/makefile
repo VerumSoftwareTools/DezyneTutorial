@@ -4,7 +4,7 @@ CPPFLAGS = -MMD -MF $(@:%.o=%.d) -MT '$(@:%.o=%.d) $@' -I$(SRC) -I$(RUNTIME)
 LDFLAGS = -lpthread
 RM = rm -rf
 TARGET = dznpi
-VERSION = 2.3.3
+VERSION = 2.4.1
 CURRENT := $(shell dzn query | grep '*' | sed 's,\* ,,')
 
 ifneq ($(VERSION),$(CURRENT))
