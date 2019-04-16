@@ -1,7 +1,7 @@
 import Controller.dzn;
 import ILED.dzn;
 import Timer.dzn;
-import IISiren.dzn;
+import ISiren.dzn;
 
 component AlarmSystem {
 	provides IController iController;
