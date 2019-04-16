@@ -1,10 +1,10 @@
 CXX = g++
 CXXFLAGS = -std=c++11 -I$(RUNTIME) -I$(SRC) -lwiringPi -lrt
-CPPFLAGS = -MMD -MF $(@:%.o=%.d) -MT '$(@:%.o=%.d) $@' -I$(SRC) -I$(RUNTIME)
+CPPFLAGS = -I$(SRC) -I$(RUNTIME)
 LDFLAGS = -lpthread
 RM = rm -rf
 TARGET = dznpi
-VERSION = 2.4.1
+VERSION = 2.9.0
 SYSTEMNAME = AlarmSystem
 SYSTEMFILE = $(SYSTEMNAME).dzn
 CURRENT := $(shell dzn query | grep '*' | sed 's,\* ,,')
@@ -37,8 +37,8 @@ $(RUNTIME)/dzn:
 	mkdir -p $@
 
 generate: $(wildcard *.dzn)
-	for f in $^; do dzn -v code --version=$(VERSION) -l c++ -o $(SRC) --depends=.d $$f; done
-	dzn -v code --version=$(VERSION) -l c++ -o $(SRC) -s $(SYSTEMNAME) $(SYSTEMFILE) --depends=.d
+	for f in $^; do dzn -v code --version=$(VERSION) -l c++ -o $(SRC) $$f; done
+	dzn -v code --version=$(VERSION) -l c++ -o $(SRC) -s $(SYSTEMNAME) $(SYSTEMFILE) 
 	touch $@
 
 clean:
@@ -52,4 +52,3 @@ clean_generated:
 distclean: clean clean_generated
 	$(RM) *~
 
--include $(wildcard $(SRC)/*.d $(RUNTIME)/*.d)

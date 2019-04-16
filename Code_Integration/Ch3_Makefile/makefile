@@ -1,10 +1,10 @@
 CXX = g++
 CXXFLAGS = -std=c++11 -I$(RUNTIME) -I$(SRC) -lwiringPi -lrt
-CPPFLAGS = -MMD -MF $(@:%.o=%.d) -MT '$(@:%.o=%.d) $@' -I$(SRC) -I$(RUNTIME)
+CPPFLAGS = -I$(SRC) -I$(RUNTIME)
 LDFLAGS = -lpthread
 RM = rm -rf
 TARGET = dznpi
-VERSION = 2.4.1
+VERSION = 2.9.0
 CURRENT := $(shell dzn query | grep '*' | sed 's,\* ,,')
 
 ifneq ($(VERSION),$(CURRENT))
@@ -35,13 +35,13 @@ $(RUNTIME)/dzn:
 	mkdir -p $@
 
 generate: $(wildcard *.dzn)
-	for f in $^; do dzn -v code --version=$(VERSION) -l c++ -o $(SRC) --depends=.d $$f; done
+	for f in $^; do dzn -v code --version=$(VERSION) -l c++ -o $(SRC) $$f; done
 	touch $@
 
 clean:
 	$(RM) $(OBJS) $(TARGET)
 
-clean_generated:
+clean_generated: 
 	$(RM) `grep -h dzn $(SRC)/*.dzn.d | sed -e 's,:.*,,' -e 's,%,.,g'`
 	$(RM) $(RUNTIME)
 	$(RM) runtime generate
@@ -49,4 +49,3 @@ clean_generated:
 distclean: clean clean_generated
 	$(RM) *~
 
--include $(wildcard $(SRC)/*.d $(RUNTIME)/*.d)
