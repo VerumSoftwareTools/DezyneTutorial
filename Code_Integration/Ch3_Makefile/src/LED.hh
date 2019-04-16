@@ -1,7 +1,7 @@
 #ifndef LED_HH
 #define LED_HH
 
-#include "skel_LED.hh"
+#include "ILED.hh"
 
 class LED : public skel::LED {
   const int PIN_RED = 27;

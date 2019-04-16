@@ -1,7 +1,7 @@
 #ifndef SIREN_HH
 #define SIREN_HH
 
-#include "skel_Siren.hh"
+#include "ISiren.hh"
 
 class Siren : public skel::Siren {
 public:

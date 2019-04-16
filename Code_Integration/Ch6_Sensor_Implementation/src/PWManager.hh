@@ -1,7 +1,7 @@
 #ifndef PWMANAGER_HH
 #define PWMANAGER_HH
 
-#include "skel_PWManager.hh"
+#include "IPWManager.hh"
 
 class PWManager : public skel::PWManager {
   const std::string password = "Dezyne";
